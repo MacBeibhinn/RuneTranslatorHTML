@@ -4,9 +4,9 @@ Runic Translator is a simple HTML file that allows anyone to translate English t
 
 **HELP:**
 
+- Download the `runic_translator.html` file, you can use Chrome or any other HTML viewer application or browser to launch the file and start translating.
 - To edit the HTML file you can use any text editor or code editor application, on Android, Linux, Windows, IOS, etc.
 - See the comments in the HTML file on what parts to edit, what they do, etc.
-- You can use Chrome or any other HTML viewer application or browser to launch the file and start translating.
 - Set the file as a bookmark on your browser to quickly access your translator again.
 - If you mess up the file when trying to edit it just download it again.
 - You can add more runic alphabets by copying one already supported, for example copy and paste all "Elder Futhark" parts but change the ID and rename it.
