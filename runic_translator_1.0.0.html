@@ -1,0 +1,383 @@
+<!-- Translator by Valhalla+ (https://bio.link/norse) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        /* everything - background optional */
+        body {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 50px;
+            margin-top: 50px;
+            background: none; /* set optional main 'background' or replace with 'background-color' */
+            transition: background-color 0.3s ease;
+        }
+        /* Container = background containing all views, texts, links, boxes, etc. */
+        #container {
+            height: 100%;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            background: none; /* set optional container 'background' or replace with 'background-color' */
+            padding: 20px;
+            /* below are some optional attributes for a card like style - remove their dashes and asterisks to set */
+            /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+            /*border-radius: 15px;*/
+            /*background-color: #fff;*/
+        }
+        /* Enter text box */
+        #input-text {
+            resize: both;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            resize: none;
+            overflow-y: auto;
+        }
+        /* Uneditable text boxes */
+        textarea {
+            width: 100%;
+            font-size: 15px;
+            font-weight: bold;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            resize: none;
+            overflow-y: auto;
+        }
+        button {
+        /* Unused round black button */
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+        label {
+            margin-right: 10px;
+        }
+    </style>
+    <title>Runic Translator</title>
+      <style>
+        /* Texts displaying Elder Futhark, Younger Futhark... */
+        .styled-textarea {
+            font-size: 15px;
+            font-weight: normal;
+            margin-top: 10px;
+            margin-bottom: -10px;
+            background: none;
+            pointer-events: none;
+            border: none;
+        }
+        /* Used for all link buttons to indicate click events */
+        .styled-upload-button {
+            height: 15px;
+            background: none;
+            color: blue;
+            border: none;
+            border-radius: 25px;
+            padding: 15px;
+            padding-top: 5px;
+            padding-bottom: 12px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+      </style>
+</head>
+<body>
+    <!-- Container holding all views -->
+    <div id="container">
+        <div class="other-textareas">
+            <!-- Main title -->
+            <h1 id="translated-text">Runic Translator</h1>
+            <form>
+                <!-- Upload .txt file -->
+                <input class="styled-upload-button" type="file" id="fileInput" accept=".txt" onchange="handleFileUpload(event)">
+                <!-- Enter text box -->
+                <textarea id="input-text" rows="4" placeholder="Enter text to translate" oninput="translateText(event)"></textarea>
+                <!-- Elder Futhark title and translation box -->
+                <textarea class="styled-textarea" placeholder="Elder Futhark:" readonly></textarea>
+                <textarea class="other-textarea" id="output-text" rows="4" readonly></textarea>
+                <!-- Younger Futhark (short-twig) title and translation box -->
+                <textarea class="styled-textarea" placeholder="Younger Futhark (short-twig):" readonly></textarea>
+                <textarea class="other-textarea" id="output-text2" rows="4" readonly></textarea>
+                <!-- Younger Futhark (long-branch) title and translation box -->
+                <textarea class="styled-textarea" placeholder="Younger Futhark (long-branch):" readonly></textarea>
+                <textarea class="other-textarea" id="output-text3" rows="4" readonly></textarea>
+                <!-- Futhorc title and translation box -->
+                <textarea class="styled-textarea" placeholder="Futhorc:" readonly></textarea>
+                <textarea class="other-textarea" id="output-text4" rows="4" readonly></textarea>
+                <!-- Ogham title and translation box -->
+                <textarea class="styled-textarea" placeholder="Ogham:" readonly></textarea>
+                <textarea class="other-textarea" id="output-text5" rows="4" readonly></textarea>
+                <!-- Important links -->
+                <button class="styled-upload-button" id="openSiteButtonUpdate" onclick="openUpdate()">Check for updates</button>
+                <button class="styled-upload-button" id="openSiteButton" onclick="openSite()">Translator by Valhalla+</button>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        //Check device theme preference
+        const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.body.style.backgroundColor = prefersDarkMode ? '#333' : '#f0f0f0';
+        //set default rune mapping (left alone)
+        let currentRuneMapping = {};
+        //translation mapping here
+        function translateText(event) {
+            //scroll to bottom of text boxes
+            updateTextareas(event);
+            //get text from the Enter text box
+            const inputText = event.target.value.toLowerCase();
+            //set space separator - often replaced with hyphens, bulletpoints, colons, etc.
+            const spaceSeparator = '᛬';
+            //Elder Futhak translation mapping:
+            currentRuneMapping = {
+                    ' ': spaceSeparator, //get space separator
+                    'a': 'ᚨ',
+                    'b': 'ᛒ',
+                    'c': 'ᚲ',
+                    'd': 'ᛞ',
+                    'e': 'ᛖ',
+                    'f': 'ᚠ',
+                    'g': 'ᚷ',
+                    'h': 'ᚺ',
+                    'i': 'ᛁ',
+                    'j': 'ᛃ',
+                    'k': 'ᚲ',
+                    'l': 'ᛚ',
+                    'm': 'ᛗ',
+                    'n': 'ᚾ',
+                    'o': 'ᛟ',
+                    'p': 'ᛈ',
+                    'q': 'ᚲ',
+                    'r': 'ᚱ',
+                    's': 'ᛋ',
+                    't': 'ᛏ',
+                    'u': 'ᚢ',
+                    'v': 'ᚢ',
+                    'w': 'ᚹ',
+                    'x': 'ᛋ',
+                    'y': 'ᛃ',
+                    'z': 'ᛉ',
+                };
+            const translatedTextEF = inputText.split('').map(char => currentRuneMapping[char] || char).join('');
+            document.getElementById('output-text').value = translatedTextEF;
+            //Younger Futhak (short-twig) translation mapping:
+            currentRuneMapping = {
+                    ' ': spaceSeparator, //get space separator
+                    'a': 'ᛆ',
+                    'b': 'ᛓ',
+                    'c': 'ᚴ',
+                    'd': 'ᛐ',
+                    'e': 'ᛁ',
+                    'f': 'ᚠ',
+                    'g': 'ᚴ',
+                    'h': 'ᚽ',
+                    'i': 'ᛁ',
+                    'j': 'ᛁ',
+                    'k': 'ᚴ',
+                    'l': 'ᛚ',
+                    'm': 'ᛙ',
+                    'n': 'ᚿ',
+                    'o': 'ᚭ',
+                    'p': 'ᛓ',
+                    'q': 'ᚴ',
+                    'r': 'ᚱ',
+                    's': 'ᛌ',
+                    't': 'ᛐ',
+                    'u': 'ᚢ',
+                    'v': 'ᚠ',
+                    'w': 'ᚢ',
+                    'x': 'ᚴᛌ',
+                    'y': 'ᚢ',
+                    'z': 'ᛌ',
+                };
+            const translatedTextYFST = inputText.split('').map(char => currentRuneMapping[char] || char).join('');
+            document.getElementById('output-text2').value = translatedTextYFST;
+            //Younger Futhak (long-branch) translation mapping:
+            currentRuneMapping = {
+                    ' ': spaceSeparator, //get space separator
+                    'a': 'ᛅ',
+                    'b': 'ᛒ',
+                    'c': 'ᚴ',
+                    'd': 'ᛏ',
+                    'e': 'ᛁ',
+                    'f': 'ᚠ',
+                    'g': 'ᚴ',
+                    'h': 'ᚼ',
+                    'i': 'ᛁ',
+                    'j': 'ᛁ',
+                    'k': 'ᚴ',
+                    'l': 'ᛚ',
+                    'm': 'ᛘ',
+                    'n': 'ᚾ',
+                    'o': 'ᚬ',
+                    'p': 'ᛒ',
+                    'q': 'ᚴ',
+                    'r': 'ᚱ',
+                    'ʀ': 'ᛦ',
+                    's': 'ᛋ',
+                    't': 'ᛏ',
+                    'u': 'ᚢ',
+                    'v': 'ᚠ',
+                    'w': 'ᚢ',
+                    'x': 'ᚴᛋ',
+                    'y': 'ᛁ',
+                    'z': 'ᛋ',
+                };
+            const translatedTextYFLB = inputText.split('').map(char => currentRuneMapping[char] || char).join('');
+            document.getElementById('output-text3').value = translatedTextYFLB;
+            //Futhorc translation mapping:
+            currentRuneMapping = {
+                    ' ': spaceSeparator, //get space separator
+                    'a': 'ᚪ',
+                    'b': 'ᛒ',
+                    'c': 'ᚳ',
+                    'd': 'ᛞ',
+                    'e': 'ᛖ',
+                    'f': 'ᚠ',
+                    'g': 'ᚷ',
+                    'h': 'ᚻ',
+                    'i': 'ᛁ',
+                    'j': 'ᛄ',
+                    'k': 'ᚳ',
+                    'l': 'ᛚ',
+                    'm': 'ᛗ',
+                    'n': 'ᚾ',
+                    'o': 'ᚩ',
+                    'p': 'ᛈ',
+                    'q': 'ᚳ',
+                    'r': 'ᚱ',
+                    's': 'ᛋ',
+                    't': 'ᛏ',
+                    'u': 'ᚢ',
+                    'v': 'ᚠ',
+                    'w': 'ᚹ',
+                    'x': 'ᛉ',
+                    'y': 'ᚣ',
+                    'z': 'ᛋ',
+                };
+            const translatedTextYAS = inputText.split('').map(char => currentRuneMapping[char] || char).join('');
+            document.getElementById('output-text4').value = translatedTextYAS;
+            //Ogham translation mapping:
+            currentRuneMapping = {
+                    ' ': '  ', //no space separator recommended for Ogham, uses double spaces instead.
+                    'a': 'ᚐ',
+                    'b': 'ᚁ',
+                    'c': 'ᚉ',
+                    'd': 'ᚇ',
+                    'e': 'ᚓ',
+                    'f': 'ᚃ',
+                    'g': 'ᚌ',
+                    'h': 'ᚆ',
+                    'i': 'ᚔ',
+                    'j': 'ᚌ',
+                    'k': 'ᚊ',
+                    'l': 'ᚂ',
+                    'm': 'ᚋ',
+                    'n': 'ᚅ',
+                    'o': 'ᚑ',
+                    'p': 'ᚚ',
+                    'q': 'ᚊ',
+                    'r': 'ᚏ',
+                    's': 'ᚄ',
+                    't': 'ᚈ',
+                    'u': 'ᚒ',
+                    'v': 'ᚃ',
+                    'w': 'ᚒᚒ',
+                    'x': 'ᚎ',
+                    'y': 'ᚔ',
+                    'z': 'ᚎ',
+                };
+            const translatedTextYOG = inputText.split('').map(char => currentRuneMapping[char] || char).join('');
+            document.getElementById('output-text5').value = translatedTextYOG;
+        }
+        //Important link
+        function openSite() {
+            window.open('https://bio.link/norse', '_blank');
+        }
+        //Important link
+        function openUpdate() {
+            window.open('https://bit.ly/RunicTranslator', '_blank');
+        }
+        //Change text box size
+        function resizeTextarea() {
+            var container = document.getElementById('container');
+            var textarea = document.getElementById('input-text');
+            textarea.style.height = (container.clientHeight - 40) + 'px';
+        }
+        //auto scroller
+        function updateTextareas(event) {
+            const mainTextareaValue = event.target.value;
+            const otherTextareas = document.querySelectorAll('.other-textarea');
+            otherTextareas.forEach((textarea) => {
+                textarea.value = mainTextareaValue;
+                textarea.scrollTop = textarea.scrollHeight;
+            });
+        }
+        //upload file logic
+        function handleFileUpload(event) {
+            //get target
+            const fileInput = event.target;
+            //get Enter text box
+            const mainTextarea = document.getElementById('input-text');
+            //if is not empty
+            if (fileInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    //get the text from the file aka file content
+                    const fileContent = e.target.result;
+                    //set file text to Enter text box
+                    mainTextarea.value = fileContent;
+                    //translate the uploaded file text
+                    translateText({ target: mainTextarea });
+                };
+                reader.readAsText(fileInput.files[0]);
+            } else {
+                //no text - clear the Enter text box
+                mainTextarea.value = '';
+            }
+        }
+        //put future functions above this comment
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Translator by Valhalla+ (https://bio.link/norse) -->
